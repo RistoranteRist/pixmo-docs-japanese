@@ -92,3 +92,7 @@ Please cite the following paper if you use this code in your work.
   year={2024}
 }
 ```
+
+## 日本語対応
+
+- LateXについて: 自分の環境では、まずTexのインストールとパス通し。そして「日本語フォントのパス指定」と「明示的にXeTeXだけを用いる」の[変更](https://github.com/RistoranteRist/pixmo-docs-japanese/blob/8b0b1507aa4cb30e854d9d6178bc6e5a186a56d5/pipeline/utils/render.py#L113)が必要だった。
