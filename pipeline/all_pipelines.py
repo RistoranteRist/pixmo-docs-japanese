@@ -1,27 +1,26 @@
 import os
-
-from pipeline.utils.anthropic_support import CustomAnthropic
+import pickle
 
 from datadreamer import DataDreamer
 from datadreamer.llms import OpenAI
 from datadreamer.steps import concat
 
-from .matplotlib_chart_pipeline import MatplotlibChartPipeline
-from .vegalite_chart_pipeline import VegaLiteChartPipeline
-from .plotly_chart_pipeline import PlotlyChartPipeline
-from .latex_chart_pipeline import LaTeXChartPipeline
-from .html_chart_pipeline import HTMLChartPipeline
-
-from .latex_table_pipeline import LaTeXTablePipeline
-from .plotly_table_pipeline import PlotlyTablePipeline
-from .html_table_pipeline import HTMLTablePipeline
-
-from .latex_document_pipeline import LaTeXDocumentPipeline
-from .html_document_pipeline import HTMLDocumentPipeline
+from pipeline.utils.anthropic_support import CustomAnthropic
 
 from .graphviz_diagram_pipeline import GraphvizDiagramPipeline
+from .html_chart_pipeline import HTMLChartPipeline
+from .html_document_pipeline import HTMLDocumentPipeline
+from .html_table_pipeline import HTMLTablePipeline
+from .latex_chart_pipeline import LaTeXChartPipeline
 from .latex_diagram_pipeline import LaTeXDiagramPipeline
+from .latex_document_pipeline import LaTeXDocumentPipeline
+from .latex_table_pipeline import LaTeXTablePipeline
+from .matplotlib_chart_pipeline import MatplotlibChartPipeline
 from .mermaid_diagram_pipeline import MermaidDiagramPipeline
+from .plotly_chart_pipeline import PlotlyChartPipeline
+from .plotly_table_pipeline import PlotlyTablePipeline
+from .vegalite_chart_pipeline import VegaLiteChartPipeline
+
 
 def run_datadreamer_session(args):
     if args.qa:
@@ -115,5 +114,11 @@ def run_datadreamer_session(args):
         # Preview n rows of the dataset
         print(scifi_dataset.head(n=5))
 
+        output_dict = scifi_dataset.export_to_dict()
+        # 保存
+        with open(f'{args.name}.pkl', "wb") as f:
+            pickle.dump(output_dict, f)
+
+        # scifi_dataset.export_to_json(f'{args.name}.json')
         # Push to HuggingFace Hub
-        scifi_dataset.publish_to_hf_hub(args.name, private=True)
+        # scifi_dataset.publish_to_hf_hub(args.name, private=True)

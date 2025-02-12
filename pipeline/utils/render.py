@@ -125,7 +125,28 @@ def render_latex(latex_source):
         )
         stdout, stderr = process.communicate()
         return process.returncode, stdout
+    # 日本語フォントサポートのプリアンブル
+    preamble = r"""
+\documentclass[12pt]{standalone}
+\usepackage{fontspec}
+\usepackage{xeCJK}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\setCJKmainfont[
+    Path=/System/Library/Fonts/,
+    BoldFont=ヒラギノ角ゴシック W6.ttc,
+    AutoFakeSlant=0.2
+]{ヒラギノ角ゴシック W3.ttc}
+\setCJKsansfont[
+    Path=/System/Library/Fonts/,
+    BoldFont=ヒラギノ角ゴシック W6.ttc,
+    AutoFakeSlant=0.2
+]{ヒラギノ角ゴシック W3.ttc}
+"""
 
+
+    # プリアンブルとLaTeXソースを結合
+    latex_source = preamble + latex_source
     # Create temporary directory
     temp_dir = tempfile.mkdtemp()
 
@@ -137,15 +158,24 @@ def render_latex(latex_source):
     with open(latex_file, "w", encoding="utf-8") as f:
         f.write(latex_source)
 
-    # Try to compile with pdflatex, xelatex, and lualatex
-    compilers = ["pdflatex", "xelatex", "lualatex"]
-    for compiler in compilers:
-        returncode, stdout = compile_latex(compiler, latex_file, temp_dir)
-        if returncode == 0:
-            break
-    else:
+
+    # Try to compile with XeTeX only
+    returncode = -1
+    stdout = compile_latex("xelatex", latex_file, temp_dir)
+
+    if b"Fatal" in stdout or b"Error" in stdout:
         rmtree(temp_dir, ignore_errors=True)
-        raise RuntimeError(f'Error encountered during LaTeX rendering with all compilers:\n{stdout.decode("utf-8")}')
+        raise RuntimeError(f'Error encountered during XeTeX rendering:\n{stdout.decode("utf-8")}')
+
+    # # Try to compile with pdflatex, xelatex, and lualatex
+    # compilers = ["xelatex", "lualatex", "pdflatex"]
+    # for compiler in compilers:
+    #     returncode, stdout = compile_latex(compiler, latex_file, temp_dir)
+    #     if returncode == 0:
+    #         break
+    # else:
+    #     rmtree(temp_dir, ignore_errors=True)
+    #     raise RuntimeError(f'Error encountered during LaTeX rendering with all compilers:\n{stdout.decode("utf-8")}')
 
     # Convert PDF bytes to images using pdf2image
     images = convert_from_bytes(open(pdf_file, "rb").read())
