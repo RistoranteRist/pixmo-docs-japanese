@@ -162,7 +162,6 @@ Please define a Python function (using `graphviz`) called `generate_diagram` tha
     (2) Remember to import necessary libraries (e.g., `import numpy as np`, `import graphviz`, etc) at the beginning of the script.
     (3) The `generate_diagram` function should save the diagram to a BytesIO and then return the diagram as a PIL Image object. **Do not close the BytesIO object.**
     (4) Only define the function and do not call it. Do not show the diagram. Save the diagram with appropriate resolution. No need to show example usage.
-    (5) Ensure that Japanese characters are displayed correctly in the graph.
 
 3. **Output Requirements**:
     Put ```python at the beginning and ``` at the end of the script to separate the code from the text. This will help me easily extract the code.
